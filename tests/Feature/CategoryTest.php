@@ -3,49 +3,51 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\TestCase;
+use App\Models\Category;
 use App\Models\User;
-use App\Models\Role;
+use Tests\TestCase;
 
-class RoleTest extends TestCase
+class CategoryTest extends TestCase
 {
     use DatabaseTransactions;
-
-    const apiURL = '/api/roles/';
-
-    const dataStructure = [
-        'id',
-        'name',
-        'guard_name',
-        'created_at',
-        'updated_at',
-    ];
+    const apiURL = '/api/categories';
 
     protected $dataBody;
 
     protected $newData;
+    const dataStructure = [
+        'id',
+        'name',
+        'slug',
+        'description',
+        'created_at',
+        'updated_at',
+    ];
 
     public function setUp(): void
     {
         parent::setUp();
 
         $user = User::find(1);
+
         $this->actingAs($user);
-        
+
         $this->dataBody = [
-            'name' => 'UniqueRoleName',
+            'name' => 'UniqueCategoryName',
+            'slug' => 'unique-category-name',
+            'description' => 'UniqueCategoryDescription',
         ];
 
-        $this->newData = Role::factory()->create();
+        $this->newData = Category::factory()->create();
     }
 
     /**
-     * Get all roles
+     * list all categories
      */
-    public function test_get_all_roles()
+    public function test_list_all_categories()
     {
         $response = $this->get(self::apiURL);
-        
+
         $response->assertStatus(200);
 
         $response->assertJsonStructure([
@@ -58,27 +60,11 @@ class RoleTest extends TestCase
     }
 
     /**
-     * Create a role using spatie permission package
+     * create a category
      */
-    public function test_create_role()
+    public function test_create_a_category()
     {
-        $response = $this->postJson(self::apiURL, $this->dataBody);
-
-        $response->assertStatus(201);
-
-        $response->assertJsonStructure([
-            'status',
-            'message',
-            'data' => self::dataStructure,
-        ]);
-    }
-
-    /**
-     * Get a single role
-     */
-    public function test_get_single_role()
-    {
-        $response = $this->get(self::apiURL . $this->newData->id);
+        $response = $this->post(self::apiURL, $this->dataBody);
 
         $response->assertStatus(200);
 
@@ -88,13 +74,13 @@ class RoleTest extends TestCase
             'data' => self::dataStructure,
         ]);
     }
-  
+
     /**
-     * Edit a role
+     * show a category
      */
-    public function test_edit_role()
+    public function test_show_a_category()
     {
-        $response = $this->putJson(self::apiURL . $this->newData['id'], $this->dataBody);
+        $response = $this->get(self::apiURL .'/'. $this->newData->id);
 
         $response->assertStatus(200);
 
@@ -102,38 +88,37 @@ class RoleTest extends TestCase
             'status',
             'message',
             'data' => self::dataStructure,
-        ]); 
-    }
-
-    /** 
-     * Delete Role
-     */
-
-    public function test_delete_role()
-    {
-        $response = $this->delete(self::apiURL . $this->newData->id);
-
-        $response->assertStatus(200);
-
-        $response->assertJsonStructure([
-            'status',
-            'message',
         ]);
     }
 
     /**
-     * Get all permissions
+     * update a category
      */
-    public function test_get_all_permissions()
+    public function test_update_a_category()
     {
-        $response = $this->get('/api/permissions');
+        $response = $this->put(self::apiURL .'/'. $this->newData->id, $this->dataBody);
 
         $response->assertStatus(200);
 
         $response->assertJsonStructure([
             'status',
             'message',
-            'permissions' => [],
+            'data' => self::dataStructure,
+        ]);
+    }
+
+    /**
+     * delete a category
+     */
+    public function test_delete_a_category()
+    {
+        $response = $this->delete(self::apiURL .'/'. $this->newData->id);
+
+        $response->assertStatus(200);
+
+        $response->assertJsonStructure([
+            'status',
+            'message',
         ]);
     }
 }

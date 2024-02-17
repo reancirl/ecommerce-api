@@ -18,5 +18,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'create stores']);
         Permission::create(['name' => 'read product types']);
         Permission::create(['name' => 'create product types']);
+        Permission::create(['name' => 'read categories']);
+        Permission::create(['name' => 'create categories']);
     }
 }

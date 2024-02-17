@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StoreController;
-use App\Http\Controllers\ProductTypeController;
+use App\Http\Controllers\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,7 +29,7 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
         Route::get('/permissions', [RoleController::class, 'getAllPermissions']);
 
         Route::apiResource('stores', StoreController::class);
-        Route::apiResource('product-types', ProductTypeController::class);
+        Route::apiResource('categories', CategoryController::class);
     });
 
     Route::post('/token/destroy',function(Request $request) {
