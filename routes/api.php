@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\StoreController;
+use App\Http\Controllers\ProductTypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +27,9 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
         Route::apiResource('roles', RoleController::class);
         Route::post('/roles/{role}/permissions', [RoleController::class, 'assignPermissions']);
         Route::get('/permissions', [RoleController::class, 'getAllPermissions']);
+
+        Route::apiResource('stores', StoreController::class);
+        Route::apiResource('product-types', ProductTypeController::class);
     });
 
     Route::post('/token/destroy',function(Request $request) {

@@ -14,6 +14,8 @@ class RoleController extends Controller
      */
     public function index()
     {
+        $this->authorize('read roles');
+
         return response()->json([
             'status' => 'success',
             'message' => 'Data retrieved successfully',
@@ -26,6 +28,8 @@ class RoleController extends Controller
      */
     public function store(RoleRequest $request)
     {
+        $this->authorize('create roles');
+
         $role = Role::create([
             'name' => request('name'),
             'guard_name' => 'web',
@@ -43,6 +47,8 @@ class RoleController extends Controller
      */
     public function show(Role $role)
     {
+        $this->authorize('read roles');
+
         return response()->json([
             'status' => 'success',
             'message' => 'Data retrieved successfully',
@@ -55,6 +61,8 @@ class RoleController extends Controller
      */
     public function update(RoleRequest $request, Role $role)
     {
+        $this->authorize('create roles');
+
         $role->update([
             'name' => request('name'),
         ]);
@@ -71,6 +79,8 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
+        $this->authorize('create roles');
+        
         $role->delete();
 
         return response()->json([

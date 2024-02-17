@@ -2,22 +2,22 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 use App\Models\User;
-use App\Models\Role;
+use App\Models\Store;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
-
-class RoleTest extends TestCase
+class StoreManagementTest extends TestCase
 {
     use DatabaseTransactions;
-
-    const apiURL = '/api/roles/';
-
+    const apiURL = '/api/stores';
     const dataStructure = [
         'id',
         'name',
-        'guard_name',
+        'slug',
+        'address',
+        'phone',
+        'email',
         'created_at',
         'updated_at',
     ];
@@ -34,19 +34,23 @@ class RoleTest extends TestCase
         $this->actingAs($user);
         
         $this->dataBody = [
-            'name' => 'UniqueRoleName',
+            'name' => 'UniqueStoreName',
+            'slug' => 'unique-store-name',
+            'address' => 'UniqueStoreAddress',
+            'phone' => 'UniqueStorePhone',
+            'email' => 'UniqueStoreEmail',
         ];
 
-        $this->newData = Role::factory()->create();
+        $this->newData = Store::factory()->create();
     }
 
     /**
-     * Get all roles
+     * get all stores
      */
-    public function test_get_all_roles()
+    public function test_get_all_stores()
     {
         $response = $this->get(self::apiURL);
-        
+
         $response->assertStatus(200);
 
         $response->assertJsonStructure([
@@ -59,27 +63,11 @@ class RoleTest extends TestCase
     }
 
     /**
-     * Create a role using spatie permission package
+     * create a store
      */
-    public function test_create_role()
+    public function test_create_store()
     {
-        $response = $this->postJson(self::apiURL, $this->dataBody);
-
-        $response->assertStatus(201);
-
-        $response->assertJsonStructure([
-            'status',
-            'message',
-            'data' => self::dataStructure,
-        ]);
-    }
-
-    /**
-     * Get a single role
-     */
-    public function test_get_single_role()
-    {
-        $response = $this->get(self::apiURL . $this->newData->id);
+        $response = $this->post(self::apiURL, $this->dataBody);
 
         $response->assertStatus(200);
 
@@ -89,13 +77,29 @@ class RoleTest extends TestCase
             'data' => self::dataStructure,
         ]);
     }
-  
+
     /**
-     * Edit a role
+     * get a store
      */
-    public function test_edit_role()
+    public function test_get_store()
     {
-        $response = $this->putJson(self::apiURL . $this->newData['id'], $this->dataBody);
+        \Log::info(self::apiURL . $this->newData->id);
+        $response = $this->get(self::apiURL .'/'. $this->newData->id);
+        $response->assertStatus(200);
+
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data' => self::dataStructure,
+        ]);
+    }
+
+    /**
+     * update a store
+     */
+    public function test_update_store()
+    {
+        $response = $this->put(self::apiURL . '/'. $this->newData->id , $this->dataBody);
 
         $response->assertStatus(200);
 
@@ -103,38 +107,21 @@ class RoleTest extends TestCase
             'status',
             'message',
             'data' => self::dataStructure,
-        ]); 
-    }
-
-    /** 
-     * Delete Role
-     */
-
-    public function test_delete_role()
-    {
-        $response = $this->delete(self::apiURL . $this->newData->id);
-
-        $response->assertStatus(200);
-
-        $response->assertJsonStructure([
-            'status',
-            'message',
         ]);
     }
 
     /**
-     * Get all permissions
+     * delete a store
      */
-    public function test_get_all_permissions()
+    public function test_delete_store()
     {
-        $response = $this->get('/api/permissions');
+        $response = $this->delete(self::apiURL . '/' . $this->newData->id);
 
         $response->assertStatus(200);
 
         $response->assertJsonStructure([
             'status',
             'message',
-            'permissions' => [],
         ]);
     }
 }
